@@ -60,3 +60,11 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+components/ui/logs/*
+!.gitkeep
+components/ui/node_modules/
+components/ui/bower_components/
+components/ui/tmp
+.DS_Store
+.idea
