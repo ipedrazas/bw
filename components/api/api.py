@@ -32,13 +32,16 @@ def save_entry():
     filename = "/data/" + m.hexdigest()
 
     mongo.db.entries.insert(
-        {'entry': entry, 'key': m.hexdigest()}
+        {
+            'entry': entry.encode("utf-8"),
+            'key': m.hexdigest(),
+            'parent': m.hexdigest()}
     )
 
     # print filename
 
     with open(filename, 'wb') as f:
-        f.write(entry)
+        f.write(entry.encode("utf-8"))
     # return 200
     return "hello"
 
@@ -48,6 +51,13 @@ def get_entry(entry):
     """Get entry."""
     entry = mongo.db.entries.find_one_or_404({'_id': entry})
     return jsonify(entry=entry)
+
+
+@app.route('/api/entries', methods=['GET'])
+def get_entries():
+    """Get entries."""
+    entries = mongo.db.entries.find()
+    return jsonify(entry=entries)
 
 
 if __name__ == '__main__':

@@ -9,17 +9,37 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
   });
 }])
 
-.controller('IdeCtrl', [function() {
+.controller('IdeCtrl', ['$scope', '$interval', 'IdeService', function($scope, $interval, IdeService) {
+        $scope.isDirty = false;
 
+         $scope.$watch('htmlVariable',function(){
+            $scope.isDirty = true;
+        });
+
+        $interval(function(){
+            if($scope.isDirty){
+                IdeService.save($scope.htmlVariable);
+                console.log("save");
+                $scope.isDirty = false;
+            }
+
+            },1000);
 }])
-.service('IdeService', ['$http',  function($http){
+.service('IdeService', ['$http', function($http){
     this.save = function(entry) {
-        $http.get(APIHOST + 'POST /sys/capabilities')
-            .success(function(data) {
-                onSuccess(data)
-            }).error(function(data){
-                onError(data)
-            });
+        $http({
+          method  : 'POST',
+          url     : '/api/entries',
+          data    : "entry=" + entry,
+          headers : {'Content-Type': 'application/x-www-form-urlencoded'}
+         })
+          .success(function(data) {
+                console.log(data);
+                if (data.errors) {
+                } else {
+                }
+          });
+
     };
 }]);
 
