@@ -27,8 +27,8 @@ def hello_bw():
 def save_entry():
     """Save entry."""
     m = hashlib.md5()
-    m.update("entry")
     entry = request.form['entry']
+    m.update(entry)
     filename = "/data/" + m.hexdigest()
 
     mongo.db.entries.insert(
