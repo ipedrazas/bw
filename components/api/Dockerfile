@@ -6,8 +6,9 @@ RUN apk add --update \
       py-pip \
       jq \
       curl \
-      bash && \
-      pip install flask Flask-PyMongo
+      bash \
+       && \
+      pip install flask Flask-PyMongo python-slugify
 
 COPY . /app
 

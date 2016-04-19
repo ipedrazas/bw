@@ -18,8 +18,13 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
 
         $interval(function(){
             if($scope.isDirty){
-                IdeService.save($scope.htmlVariable);
-                console.log("save");
+                var entry = {};
+                entry = {title: $scope.title, body: $scope.htmlVariable};
+                console.log(entry);
+                if (entry.body) {
+                    IdeService.save(entry);
+                    console.log("save");
+                }
                 $scope.isDirty = false;
             }
 
@@ -27,12 +32,7 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
 }])
 .service('IdeService', ['$http', function($http){
     this.save = function(entry) {
-        $http({
-          method  : 'POST',
-          url     : '/api/entries',
-          data    : "entry=" + entry,
-          headers : {'Content-Type': 'application/x-www-form-urlencoded'}
-         })
+        $http.post('/api/entries', entry)
           .success(function(data) {
                 console.log(data);
                 if (data.errors) {

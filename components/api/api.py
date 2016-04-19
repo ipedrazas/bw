@@ -6,6 +6,8 @@ API to work as backend for BW
 from flask import Flask, jsonify, request
 from flask.ext.pymongo import PyMongo
 import hashlib
+from slugify import slugify
+# from slugify import slugify
 
 
 app = Flask(__name__)
@@ -26,23 +28,31 @@ def hello_bw():
 @app.route('/api/entries', methods=['POST'])
 def save_entry():
     """Save entry."""
-    m = hashlib.md5()
-    entry = request.form['entry']
-    m.update(entry)
-    filename = "/data/" + m.hexdigest()
+    app.logger.debug(request.get_json())
+    content = request.get_json()
+    if content:
+        m = hashlib.md5()
+        m.update(content.get('body').encode("utf-8"))
 
-    mongo.db.entries.insert(
-        {
-            'entry': entry.encode("utf-8"),
-            'key': m.hexdigest(),
-            'parent': m.hexdigest()}
-    )
+        if not content.get('title'):
+            prefix = "new-"
+        else:
+            slug = content.get('title').encode("utf-8")
+            prefix = slugify(str.lower(slug)) + '-'
 
-    # print filename
+        filename = "/data/" + prefix + m.hexdigest()
 
-    with open(filename, 'wb') as f:
-        f.write(entry.encode("utf-8"))
-    # return 200
+        mongo.db.entries.insert(
+            {
+                'body': content.get('body').encode("utf-8"),
+                'key': m.hexdigest(),
+                'title': content.get('title').encode("utf-8"),
+                'parent': m.hexdigest()}
+        )
+
+        with open(filename, 'wb') as f:
+            f.write(content.get('body').encode("utf-8"))
+
     return "hello"
 
 
