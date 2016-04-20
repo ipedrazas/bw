@@ -32,7 +32,6 @@
 
 .ide{
 
-  width: 90%;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -47,4 +46,11 @@
   margin-right: auto;
   font-size: 12px;
   color: grey;
+}
+
+.entriesTitle{
+  text-align: center;
+}
+.entries{
+  list-style-type: none;
 }

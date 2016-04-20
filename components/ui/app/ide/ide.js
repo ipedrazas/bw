@@ -19,28 +19,64 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
         $interval(function(){
             if($scope.isDirty){
                 var entry = {};
-                entry = {title: $scope.title, body: $scope.htmlVariable};
-                console.log(entry);
-                if (entry.body) {
-                    IdeService.save(entry);
-                    console.log("save");
-                }
+                if ($scope.htmlVariable) {
+                    entry = {title: $scope.title, body: $scope.htmlVariable, id: $scope.id};
+
+                    IdeService.save(entry)
+                        .success(function(data){
+                            console.log(data);
+                             loadEntries();
+                        });
+
+                };
                 $scope.isDirty = false;
             }
 
-            },1000);
-}])
-.service('IdeService', ['$http', function($http){
-    this.save = function(entry) {
-        $http.post('/api/entries', entry)
-          .success(function(data) {
-                console.log(data);
-                if (data.errors) {
-                } else {
-                }
-          });
+        },5000);
 
+
+        $scope.loadEntry = function(oid){
+            console.log(oid);
+            IdeService.getEntry(oid).success(function(data){
+                 console.log(data);
+                 $scope.htmlVariable = data['body'];
+                 $scope.title = data['title'];
+                 var oid = data['_id'];
+                 $scope.id = oid['$oid'];
+            });
+        };
+
+        var loadEntries = function(){
+            IdeService.list().success(function(data){
+                            console.log(data);
+                            $scope.files = data;
+                        });
+        };
+
+        loadEntries();
+
+}])
+.factory('IdeService', ['$http', function($http){
+
+    var save = function(entry) {
+        return $http.post('/api/entries', entry);
     };
+
+    var list = function(){
+        return $http.get('/api/entries');
+    };
+
+    var getEntry = function(oid){
+        return $http.get('/api/entries/' + oid);
+    };
+
+
+  return {
+    save: save,
+    list: list,
+    getEntry: getEntry,
+
+  };
 }]);
 
 
