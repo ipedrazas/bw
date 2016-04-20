@@ -20,18 +20,20 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
             if($scope.isDirty){
                 var entry = {};
                 if ($scope.htmlVariable) {
-                    entry = {title: $scope.title, body: $scope.htmlVariable, id: $scope.id};
-
+                    entry = {title: $scope.title, body: $scope.htmlVariable, id: $scope.oid};
+                    console.log(entry);
                     IdeService.save(entry)
                         .success(function(data){
                             console.log(data);
-                            var oid = data['_id'];
-                            $scope.id = oid['$oid'];
+                            var oid = data['$oid'];
+                            console.log(oid);
+                            $scope.oid = oid;
                              loadEntries();
                         });
 
                 };
                 $scope.isDirty = false;
+                console.log($scope);
             }
 
         },5000);
@@ -44,7 +46,7 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
                  $scope.htmlVariable = data['body'];
                  $scope.title = data['title'];
                  var oid = data['_id'];
-                 $scope.id = oid['$oid'];
+                 $scope.oid = oid['$oid'];
             });
         };
 
