@@ -25,6 +25,8 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
                     IdeService.save(entry)
                         .success(function(data){
                             console.log(data);
+                            var oid = data['_id'];
+                            $scope.id = oid['$oid'];
                              loadEntries();
                         });
 

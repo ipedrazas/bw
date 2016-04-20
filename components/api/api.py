@@ -16,7 +16,7 @@ app = Flask(__name__)
 # connect to another MongoDB server altogether
 app.config['MONGO_HOST'] = 'mongodb'
 app.config['MONGO_PORT'] = 27017
-app.config['MONGO_DBNAME'] = 'test5'
+app.config['MONGO_DBNAME'] = 'docdata'
 mongo = PyMongo(app, config_prefix='MONGO')
 
 
@@ -43,6 +43,7 @@ def save_entry():
         # TODO: to create versions, use the parent & key
 
         if content.get('id'):
+            app.logger.debug("Update")
             new_object = mongo.db.entries.update(
                 {'_id': ObjectId(content.get('id'))},
                 {
@@ -54,6 +55,7 @@ def save_entry():
                 }
             )
         else:
+            app.logger.debug("Insert")
             new_object = mongo.db.entries.insert(
                 {
                     'body': content.get('body').encode("utf-8"),
