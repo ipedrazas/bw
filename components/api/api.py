@@ -16,7 +16,7 @@ app = Flask(__name__)
 # connect to another MongoDB server altogether
 app.config['MONGO_HOST'] = 'mongodb'
 app.config['MONGO_PORT'] = 27017
-app.config['MONGO_DBNAME'] = 'test2'
+app.config['MONGO_DBNAME'] = 'test3'
 mongo = PyMongo(app, config_prefix='MONGO')
 
 
