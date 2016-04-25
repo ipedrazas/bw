@@ -16,7 +16,7 @@ app = Flask(__name__)
 # connect to another MongoDB server altogether
 app.config['MONGO_HOST'] = 'mongodb'
 app.config['MONGO_PORT'] = 27017
-app.config['MONGO_DBNAME'] = 'test3'
+app.config['MONGO_DBNAME'] = 'doctest2'
 
 mongo = PyMongo(app, config_prefix='MONGO')
 
@@ -43,28 +43,31 @@ def save_entry():
 
         # TODO: to create versions, use the parent & key
 
-        if content.get('id'):
-            app.logger.debug("Update " + content.get('id'))
-            new_object = mongo.db.entries.update(
-                {'_id': ObjectId(content.get('id'))},
-                {
-                    'body': content.get('body').encode("utf-8"),
-                    'key': m.hexdigest(),
-                    'title': content.get('title', '').encode("utf-8"),
-                    'parent': m.hexdigest(),
-                    'path': filename
-                }
+        if content.get('oid'):
+            app.logger.debug("Update " + content.get('oid'))
+            new_object = {
+                'body': content.get('body').encode("utf-8"),
+                'key': m.hexdigest(),
+                'title': content.get('title', '').encode("utf-8"),
+                'path': filename,
+                'parent': content.get('oid'),
+                '_id': ObjectId(content.get('oid'))
+            }
+            mongo.db.entries.update(
+                {'_id': ObjectId(content.get('oid'))}, new_object
             )
         else:
             app.logger.debug("Insert")
-            new_object = mongo.db.entries.insert(
-                {
-                    'body': content.get('body').encode("utf-8"),
-                    'key': m.hexdigest(),
-                    'title': content.get('title', '').encode("utf-8"),
-                    'parent': m.hexdigest(),
-                    'path': filename
-                }
+            new_object = {
+                'body': content.get('body').encode("utf-8"),
+                'key': m.hexdigest(),
+                'title': content.get('title', '').encode("utf-8"),
+                'parent': '',
+                'path': filename
+            }
+            insert = mongo.db.entries.insert(new_object)
+            new_object = mongo.db.entries.find_one_or_404(
+                {'_id': ObjectId(insert)}
             )
         app.logger.debug(new_object)
         with open(filename, 'wb') as f:
@@ -84,6 +87,13 @@ def get_entry(entry):
 def get_entries():
     """Get entries."""
     entries = mongo.db.entries.find()
+    return dumps(entries)
+
+
+@app.route('/api/versions/<entry>', methods=['GET'])
+def get_versions(entry):
+    """Get entries."""
+    entries = mongo.db.entries.find({'parent': ObjectId(entry)})
     return dumps(entries)
 
 

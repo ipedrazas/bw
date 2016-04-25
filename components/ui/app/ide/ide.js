@@ -11,21 +11,24 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
 
 .controller('IdeCtrl', ['$scope', '$interval', 'IdeService', function($scope, $interval, IdeService) {
         $scope.isDirty = false;
+        $scope.doc = {};
 
          $scope.$watch('htmlVariable',function(){
             $scope.isDirty = true;
+            $scope.doc.body = $scope.htmlVariable;
         });
 
         $interval(function(){
             if($scope.isDirty){
-                var entry = {};
                 if ($scope.htmlVariable) {
-                    entry = {title: $scope.title, body: $scope.htmlVariable, id: $scope.oid};
-                    console.log(entry);
-                    IdeService.save(entry)
+                    console.log($scope.doc);
+                    IdeService.save($scope.doc)
                         .success(function(data){
-                            var oid = data['$oid'];
-                            $scope.oid = oid;
+                            console.log(data);
+                            setDoc(data, $scope);
+                            console.log(data);
+                            // var oid = data['_id'];
+                            // $scope.doc.oid = oid['$oid'];
                              loadEntries();
                         });
 
@@ -39,12 +42,23 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
         $scope.loadEntry = function(oid){
             console.log(oid);
             IdeService.getEntry(oid).success(function(data){
-                 $scope.htmlVariable = data['body'];
-                 $scope.title = data['title'];
-                 var oid = data['_id'];
-                 $scope.oid = oid['$oid'];
+                setDoc(data, $scope);
             });
         };
+
+        var setDoc = function(entry, $scope){
+                var doc = {};
+                console.log(entry);
+                 $scope.htmlVariable = entry['body'];
+                 doc.title = entry['title'];
+                 doc.parent = entry['parent'];
+                 doc.key = entry['key'];
+                 var oid = entry['_id'];
+                 doc.oid = oid['$oid'];
+                 doc.body = entry['body'];
+                 $scope.doc = doc;
+                 console.log(doc);
+        }
 
         var loadEntries = function(){
             IdeService.list().success(function(data){
@@ -68,6 +82,10 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
     var getEntry = function(oid){
         return $http.get('/api/entries/' + oid);
     };
+
+    var getVersions = function(oid){
+        return $http.get('/api/versions/' + oid);
+    }
 
 
   return {
