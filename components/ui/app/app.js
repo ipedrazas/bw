@@ -4,8 +4,11 @@
 angular.module('myApp', [
   'ngRoute',
   'myApp.ide',
-  'myApp.version'
+  'myApp.md',
+  'myApp.version',
+  'ui.codemirror',
+  'ui.bootstrap',
 ]).
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.otherwise({redirectTo: '/ide'});
+  $routeProvider.otherwise({redirectTo: '/'});
 }]);

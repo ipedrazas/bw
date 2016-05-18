@@ -1,20 +1,20 @@
 
-<div class="row">
-        <div class="col-md-2">
-            <h2 class="entriesTitle">Files</h2>
-            <ul ng-repeat="file in files" class="entries">
-                <li><button ng-click="loadEntry(file._id.$oid)">{{ file.title }}</button></li>
-            </ul>
-        </div>
-        <div class="col-md-8 ide">
-            <input type="text" ng-model="doc.title">
-            <text-angular ng-model="htmlVariable" ></text-angular>
-        </div>
-        <div class="col-md-1">
-            <h3 class="entryVersions">Versions</h3>
-            <ul ng-repeat="version in versions" class="entries">
-                <li>{{ version }}</li>
-            </ul>
-        </div>
-</div>
 
+            <div class="row">
+                <div class="col-md-2">
+                    <h2 class="entriesTitle">Files</h2>
+                    <ul ng-repeat="file in files" class="entries">
+                        <li><button ng-click="loadEntry(file._id.$oid)">{{ file.title }}</button></li>
+                    </ul>
+                </div>
+                <div class="col-md-8 ide">
+                    <input type="text" ng-model="doc.title">
+                    <text-angular ng-model="htmlVariable" ></text-angular>
+                </div>
+                <div class="col-md-1">
+                    <h3 class="entryVersions">Versions</h3>
+                    <ul ng-repeat="version in versions" class="entries">
+                        <li>{{ version }}</li>
+                    </ul>
+                </div>
+        </div>

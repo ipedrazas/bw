@@ -46,6 +46,7 @@ angular.module('myApp.ide', ['ngRoute', 'textAngular'])
             });
         };
 
+
         var setDoc = function(entry, $scope){
                 var doc = {};
                 console.log(entry);
